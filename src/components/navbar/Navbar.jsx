@@ -11,6 +11,7 @@ import InputBase from '@mui/material/InputBase';
 import {NavLink} from 'react-router-dom'
 import { Menu, MenuItem } from '@mui/material';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import Sidebar from '../sidebar/Sidebar'
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -50,7 +51,7 @@ const Navbar = () => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static" color="transparent">
+            <AppBar position="fixed" color="transparent" sx={{zIndex:1300}}>
                 <Toolbar
                   sx={{
                       display:"flex",
@@ -106,6 +107,7 @@ const Navbar = () => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
+            <Sidebar/>
             {open && profileMenu()}
         </Box>
     );
