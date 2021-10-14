@@ -51,7 +51,7 @@ const Navbar = () => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="fixed" color="transparent" sx={{zIndex:1300}}>
+            <AppBar position="fixed"  sx={{zIndex:1300,background:"white"}}>
                 <Toolbar
                   sx={{
                       display:"flex",
@@ -59,7 +59,7 @@ const Navbar = () => {
                   }}
                 >
 
-                    <Typography variant="h4" component="div"  >
+                    <Typography variant="h4" component="div" color="black"  >
                         DevTube
                      </Typography>
                     <Box
@@ -82,7 +82,7 @@ const Navbar = () => {
                             padding:"4px 11px 4px 11px"
                         }}
                         >
-                            <SearchIcon/>
+                            <SearchIcon sx={{color:'black'}} />
                         </Box>
                         <InputBase
                         type="search"
@@ -103,7 +103,7 @@ const Navbar = () => {
                         aria-label="menu"
                         onClick={handleClick}
                     >
-                        <AccountCircleOutlinedIcon sx={{ fontSize: "2.3rem" }} />
+                        <AccountCircleOutlinedIcon sx={{ fontSize: "2.3rem",color:"black" }} />
                     </IconButton>
                 </Toolbar>
             </AppBar>
