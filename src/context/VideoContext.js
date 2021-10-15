@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer} from 'react'
+import { createContext, useContext, useReducer } from 'react'
 
 
 
@@ -9,9 +9,58 @@ const videoReducer = (state, action) => {
     switch (action.type) {
         case 'GET_ALL_VIDEO':
             return {
+                ...state,
                 videos: action.payload
+
             }
-            
+
+        case 'USER_CHOICES':
+            return {
+                ...state,
+                playlist: action.payload.playlist,
+                likedVideos: action.payload.likedVideos
+            }
+
+        case 'CREATE_PLAYLIST':
+            return {
+                ...state,
+                playlist: [...state.playlist, action.payload]
+            }
+
+        case 'ADD_VIDEO_TO_PLAYLIST':
+            return {
+                ...state,
+                playlist: state.playlist.map(play => {
+                    if (play._id === action.payload.playlist_id) {
+                        play.videos.push(action.payload.video_id)
+                    }
+                    return play
+                })
+            }
+
+
+        case 'REMOVE_VIDEO_FROM_PLAYLIST':
+
+            return {
+                ...state,
+                playlist: state.playlist.map(play => {
+                    if (play._id === action.payload.playlist_id) {
+                        play.videos = play.videos.filter(vid => vid !== action.payload.video_id)
+                    }
+                    return play
+                })
+            }
+
+        case 'ADD_TO_LIKED_VIDEOS':
+            return {
+                ...state,
+                likedVideos: [...state.likedVideos, action.payload.video_id]
+            }
+        case 'REMOVE_FROM_LIKED_VIDEOS':
+            return {
+                ...state,
+                likedVideos: state.likedVideos.filter(id=>id!==action.payload.video_id)
+            }
         default:
             return state
 
@@ -19,7 +68,9 @@ const videoReducer = (state, action) => {
 }
 
 let intialState = {
-    videos:[]
+    videos: [],
+    playlist: [],
+    likedVideos: []
 }
 
 export const VideoProvider = ({ children }) => {
@@ -30,11 +81,11 @@ export const VideoProvider = ({ children }) => {
     //     intialState.email = userState.email
     // }
 
-    const [state, dispatch] = useReducer(videoReducer,  intialState )
+    const [state, dispatch] = useReducer(videoReducer, intialState)
 
     return (
         <>
-            <VideoContext.Provider value={{videoState:state,videoDispatch:dispatch}}>
+            <VideoContext.Provider value={{ videoState: state, videoDispatch: dispatch }}>
                 {children}
             </VideoContext.Provider>
         </>)

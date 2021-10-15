@@ -11,20 +11,18 @@ import { getVideoInfo, getUserChoices, addToLikedVideos, removeFromLikedVideos }
 import Loader from '../loader/Loader'
 import { useParams } from 'react-router-dom'
 import Playlist from './Playlist';
-
+import {useVideo} from '../../context/VideoContext'
 
 
 
 
 
 const WatchVideo = () => {
-
+    
+    const {videoState,videoDispatch} = useVideo()
     const [video, setVideo] = useState('');
     const [loading, setLoading] = useState(false);
-    const [userChoices, setUserChoices] = useState('')
-    const [likedVideo, setLikedVideo] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
-    const [userPlaylist, setUserPlaylist] = useState([]);
     let { video_id } = useParams()
 
 
@@ -52,25 +50,27 @@ const WatchVideo = () => {
         try {
             const res = await getUserChoices();
             let video = res.data.data
-            setUserChoices(video)
-            setUserPlaylist(video.playlist)
-            setLikedVideo(video.liked_videos.some(vid => vid === video_id))
+            videoDispatch({type:'USER_CHOICES',payload:video})
         } catch (error) {
 
         }
     }
 
-    const isVideoLiked = () => {
-        if (userChoices && userChoices.liked_videos.length > 0) {
-            setLikedVideo(userChoices.liked_videos.some(vid => vid === video_id))
+    const isVideoLiked = ()=>{
+        if(videoState && videoState?.likedVideos?.length>0){
+           return  videoState.likedVideos.some(vid => vid === video_id)
+        } else {
+            return false
         }
     }
+
+  
 
     const handleLikeClick = async (likedValue) => {
         try {
             const res = likedValue ? await addToLikedVideos({ video_id: video_id }) : removeFromLikedVideos({ video_id: video_id });
-            setLikedVideo(likedValue)
-
+            let type = likedValue ? "ADD_TO_LIKED_VIDEOS" :"REMOVE_FROM_LIKED_VIDEOS"
+            videoDispatch({type:type,payload:{video_id:video_id}})
         } catch (error) {
 
         }
@@ -107,7 +107,7 @@ const WatchVideo = () => {
                             sx={{ marginRight: "2rem" }}
                             onClick={handleClick}
                         />
-                        {likedVideo ?
+                        { isVideoLiked() ?
                             <ThumbUpIcon
                                 color="action"
                                 fontSize="large"
@@ -142,7 +142,8 @@ const WatchVideo = () => {
                     open={open}
                     handleClose={handleClose}
                     vid ={video_id}
-                    userPlaylist = {userPlaylist}
+                    userPlaylist = {videoState.playlist}
+                    videoDispatch ={videoDispatch}
                     getUserChoicesInfo={getUserChoicesInfo}
                 />
             }

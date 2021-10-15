@@ -1,13 +1,13 @@
 import { Box, Menu, MenuItem, Modal, TextField } from "@mui/material"
-import { useState,useRef } from "react";
+import { useState, useRef } from "react";
 import { NavLink } from "react-router-dom"
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckIcon from '@mui/icons-material/Check';
-import { addToPlayList, removeFromPaylist,createPlaylist } from '../api'
+import { addToPlayList, removeFromPaylist, createPlaylist } from '../api'
 import ModalComp from '../modalComp/ModalComp'
 
 
-const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, getUserChoicesInfo }) => {
+const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist,videoDispatch }) => {
 
     const [modalOpen, setModalOpen] = useState(false)
     const handleOpenModal = () => { setModalOpen(true) };
@@ -17,7 +17,7 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, getUserChoic
     const addToUserPlaylist = async (playlist_id) => {
         try {
             const res = await addToPlayList({ playlist_id: playlist_id, video_id: vid })
-            getUserChoicesInfo()
+            videoDispatch({type:'ADD_VIDEO_TO_PLAYLIST',payload:{playlist_id: playlist_id, video_id: vid}})
         } catch (error) {
 
         }
@@ -26,27 +26,32 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, getUserChoic
     const removeFromUserPlaylist = async (playlist_id) => {
         try {
             const res = await removeFromPaylist({ playlist_id: playlist_id, video_id: vid })
-            getUserChoicesInfo()
+            videoDispatch({type:'REMOVE_VIDEO_FROM_PLAYLIST',payload:{playlist_id: playlist_id, video_id: vid}})
         } catch (error) {
 
         }
     }
 
 
-    const createNewPlaylist = async (name)=>{
+    const createNewPlaylist = async (name) => {
         try {
-            console.log("name",name)
-            const res = await createPlaylist({name:name})
+            if (name.trim() === '') {
+               alert('Name is required.')
+            } else {
+                const res = await createPlaylist({ name: name })
+                videoDispatch({type:'CREATE_PLAYLIST',payload:{name:name,videos:[vid]}})
+            }
+
         } catch (error) {
-            
+
         }
     }
 
 
     const addNewPlaylist = () => {
         return <Box sx={{ position: 'relative' }}>
-            <Box sx={{position:'absolute',right:"10px",top:"18px",zIndex:4}} onClick={()=>{createNewPlaylist(playlistName.current.value)}} >
-                <AddCircleOutlineIcon  />
+            <Box sx={{ position: 'absolute', right: "10px", top: "18px", zIndex: 4 }} onClick={() => { createNewPlaylist(playlistName.current.value) }} >
+                <AddCircleOutlineIcon />
             </Box>
             <TextField inputRef={playlistName} fullWidth label="playlist name" id="fullWidth" />
 
@@ -74,7 +79,10 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, getUserChoic
                         return <Box
                             key={index}
                             sx={{ display: 'flex', alignItems: 'center', padding: "5px 15px", cursor: "pointer" }}
-                            onClick={() => { play.videos.some(id => id === vid) ? removeFromUserPlaylist(play._id) : addToUserPlaylist(play._id) }}
+                            onClick={() => { 
+                                play.videos.some(id => id === vid) ? removeFromUserPlaylist(play._id) : addToUserPlaylist(play._id) 
+                                handleClose()
+                            }}
                         >
                             <span>{
                                 play.videos.some(id => id === vid) ?
