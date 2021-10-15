@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
-import {NavLink} from 'react-router-dom'
+import {NavLink,useRouteMatch} from 'react-router-dom'
 import { Menu, MenuItem } from '@mui/material';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import Sidebar from '../sidebar/Sidebar'
@@ -16,6 +16,8 @@ import Sidebar from '../sidebar/Sidebar'
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+    const login = useRouteMatch('/login')
+    const signup = useRouteMatch('/signup')
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -62,6 +64,8 @@ const Navbar = () => {
                     <Typography variant="h4" component="div" color="black"  >
                         DevTube
                      </Typography>
+                     {
+                      !login && !signup &&   
                     <Box
                         sx={{
                             display:{
@@ -97,7 +101,7 @@ const Navbar = () => {
                          
                         />
                     </Box>
-
+                    }
                     <IconButton
                         color="inherit"
                         aria-label="menu"
@@ -107,7 +111,7 @@ const Navbar = () => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-            <Sidebar/>
+            {!login && !signup && <Sidebar/>}
             {open && profileMenu()}
         </Box>
     );
