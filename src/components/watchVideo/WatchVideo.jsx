@@ -1,11 +1,16 @@
+import { useEffect, useState } from 'react'
 import { Box, Grid, Toolbar, Avatar, Typography } from "@mui/material";
 import ReactPlayer from "react-player";
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
 import HistoryIcon from '@mui/icons-material/History';
-
+import { getVideoInfo, getUserChoices, addToLikedVideos, removeFromLikedVideos } from '../api'
+import Loader from '../loader/Loader'
+import { useParams } from 'react-router-dom'
+import Playlist from './Playlist';
 
 
 
@@ -14,6 +19,70 @@ import HistoryIcon from '@mui/icons-material/History';
 
 const WatchVideo = () => {
 
+    const [video, setVideo] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [userChoices, setUserChoices] = useState('')
+    const [likedVideo, setLikedVideo] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [userPlaylist, setUserPlaylist] = useState([]);
+    let { video_id } = useParams()
+
+
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const getVideo = async () => {
+        try {
+            setLoading(true)
+            const res = await getVideoInfo({ video_id: video_id })
+            setVideo(res.data.data)
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
+        }
+    }
+
+    const getUserChoicesInfo = async () => {
+        try {
+            const res = await getUserChoices();
+            let video = res.data.data
+            setUserChoices(video)
+            setUserPlaylist(video.playlist)
+            setLikedVideo(video.liked_videos.some(vid => vid === video_id))
+        } catch (error) {
+
+        }
+    }
+
+    const isVideoLiked = () => {
+        if (userChoices && userChoices.liked_videos.length > 0) {
+            setLikedVideo(userChoices.liked_videos.some(vid => vid === video_id))
+        }
+    }
+
+    const handleLikeClick = async (likedValue) => {
+        try {
+            const res = likedValue ? await addToLikedVideos({ video_id: video_id }) : removeFromLikedVideos({ video_id: video_id });
+            setLikedVideo(likedValue)
+
+        } catch (error) {
+
+        }
+    }
+
+    useEffect(() => {
+        getVideo()
+        getUserChoicesInfo()
+    }, [])
+
+
+
     return (
         <Box sx={{ marginLeft: "150px" }}>
             <Toolbar />
@@ -21,32 +90,62 @@ const WatchVideo = () => {
                 <Grid item lg={12} align="center" >
                     <ReactPlayer
                         width="80%"
-                        url="https://youtu.be/ZvbzSrg0afE"
+                        url={video?.url}
                         style={{ minHeight: "30rem" }}
                         controls
                     />
                     <Box sx={{ display: "flex", width: "80%", alignItems: 'center' }}>
-                        <Avatar component="span" sx={{ width: 56, height: 56 }} src="https://yt3.ggpht.com/ytc/AKedOLR8gqN3fHHNYbehMcsJ49rapBPhJMGPYSrl6YQyNg=s88-c-k-c0x00ffffff-no-rj" />
+                        <Avatar component="span" sx={{ width: 56, height: 56 }} src={video?.channel_image} />
                         <Box sx={{ display: "flex", flexDirection: "column", marginLeft: "1rem", justifyContent: 'flex-start' }}>
-                            <span style={{ fontSize: "1.5rem" }}  >How JavaScript Works 🔥& Execution Context | Namaste JavaScript Ep.1</span>
-                            <span style={{ fontSize: "1.1rem", marginTop: "0.5rem", textAlign: "left" }} >Akshay Saini</span>
+                            <span style={{ fontSize: "1.5rem" }}  >{video?.title}</span>
+                            <span style={{ fontSize: "1.1rem", marginTop: "0.5rem", textAlign: "left" }} >{video.channel_name}</span>
                         </Box>
                     </Box>
                     <Box sx={{ width: "80%", textAlign: "left", marginTop: "1rem" }}>
-                        <PlaylistAddIcon fontSize="large" sx={{ marginRight: "2rem" }} />
-                        <ThumbUpAltOutlinedIcon fontSize="large" sx={{ marginRight: "2rem" }} />
-                        <WatchLaterOutlinedIcon fontSize="large" sx={{ marginRight: "2rem" }} />
+                        <PlaylistAddIcon
+                            fontSize="large"
+                            sx={{ marginRight: "2rem" }}
+                            onClick={handleClick}
+                        />
+                        {likedVideo ?
+                            <ThumbUpIcon
+                                color="action"
+                                fontSize="large"
+                                sx={{ marginRight: "2rem" }}
+                                onClick={() => { handleLikeClick(false) }}
+                            />
+                            :
+                            <ThumbUpAltOutlinedIcon
+                                fontSize="large"
+                                sx={{ marginRight: "2rem" }}
+                                onClick={() => { handleLikeClick(true) }}
+                            />}
+                        <WatchLaterOutlinedIcon
+                            fontSize="large"
+                            sx={{ marginRight: "2rem" }}
+                        />
                     </Box>
                     <Box sx={{ width: "80%", textAlign: "left", marginTop: "1rem" }}>
                         <Typography variant="h6" >Description</Typography>
                         <Typography variant="subtitle1">
-                            Understanding how JavaScript works behind the scenes, inside the JS Engine will make you a better developer. This video covers details about Execution Context Creation and its 2 phases: Memory Allocation Phase and the Code Execution phase.
+                            {video?.description}
                         </Typography>
                     </Box>
                 </Grid>
 
             </Grid>
-
+            {loading && <Loader loading={loading} />}
+            {
+                open &&
+                <Playlist
+                    anchorEl={anchorEl}
+                    open={open}
+                    handleClose={handleClose}
+                    vid ={video_id}
+                    userPlaylist = {userPlaylist}
+                    getUserChoicesInfo={getUserChoicesInfo}
+                />
+            }
         </Box>
     );
 }
