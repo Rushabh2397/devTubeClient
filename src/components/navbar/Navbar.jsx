@@ -74,7 +74,7 @@ const Navbar = () => {
                         justifyContent: "space-between"
                     }}
                 >
-                    <NavLink style={{ textDecoration: 'none', listStyle: 'none', color: "black" }} to="/home">
+                    <NavLink style={{ textDecoration: 'none', listStyle: 'none', color: "black",cursor:'pointer' }} to="/home">
                         <Typography variant="h4" component="div" color="black"  >
                             DevTube
                      </Typography>

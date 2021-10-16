@@ -146,34 +146,34 @@ const WatchVideo = () => {
                     <Box sx={{ width: "80%", textAlign: "left", marginTop: "1rem" }}>
                         <PlaylistAddIcon
                             fontSize="large"
-                            sx={{ marginRight: "2rem" }}
+                            sx={{ marginRight: "2rem",cursor:'pointer' }}
                             onClick={handlePlaylist}
                         />
                         {isVideoLiked() ?
                             <ThumbUpIcon
                                 color="action"
                                 fontSize="large"
-                                sx={{ marginRight: "2rem" }}
+                                sx={{ marginRight: "2rem",cursor:'pointer' }}
                                 onClick={() => { handleLikeClick(false) }}
                             />
                             :
                             <ThumbUpAltOutlinedIcon
                                 fontSize="large"
-                                sx={{ marginRight: "2rem" }}
+                                sx={{ marginRight: "2rem",cursor:'pointer' }}
                                 onClick={() => { handleLikeClick(true) }}
                             />}
                         {
                             isVideoWatchLater() ?
                                 < CheckIcon
                                     fontSize="large"
-                                    sx={{ marginRight: "2rem" }}
+                                    sx={{ marginRight: "2rem",cursor:'pointer' }}
                                     onClick={() => { handleWatchLaterClick(false) }}
                                 />
                                 :
 
                                 <WatchLaterOutlinedIcon
                                     fontSize="large"
-                                    sx={{ marginRight: "2rem" }}
+                                    sx={{ marginRight: "2rem",cursor:'pointer' }}
                                     onClick={() => { handleWatchLaterClick(true) }}
                                 />
                         }
