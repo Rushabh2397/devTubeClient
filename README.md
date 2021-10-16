@@ -1,3 +1,28 @@
+Live Project [URL](https://rdevtube.netlify.app/)
+
+[Project Source Server](https://github.com/Rushabh2397/devTubeServer)
+
+## Description
+DevTube is a video streaming webapp with features such as playlist management,liked videos,watch later videos,login,signup.
+
+### Features
+
+- Playlist Management
+- Liked Videos
+- Watch Later Videos
+- Signup
+- Login
+
+## Tech Stack
+
+- Mongodb
+- Express
+- Node
+- React
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
