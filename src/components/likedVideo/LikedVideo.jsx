@@ -24,7 +24,6 @@ const LikedVideo = () => {
             videoDispatch({ type: 'USER_CHOICES', payload: video })
             setLoading(false)
         } catch (error) {
-            console.log("error",error)
             setLoading(false)
         }
     }

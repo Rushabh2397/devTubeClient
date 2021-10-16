@@ -11,10 +11,10 @@ import { Menu, MenuItem } from '@mui/material';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import Sidebar from '../sidebar/Sidebar'
 import { useHistory } from 'react-router-dom'
-import {useAuth} from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 
 const Navbar = () => {
-    const {user,userDispatch} = useAuth()
+    const { user, userDispatch } = useAuth()
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const login = useRouteMatch('/login')
@@ -29,8 +29,8 @@ const Navbar = () => {
         setAnchorEl(null);
     };
 
-    const logout = ()=>{
-        userDispatch({type:'LOGOUT_SUCCESS'})
+    const logout = () => {
+        userDispatch({ type: 'LOGOUT_SUCCESS' })
         localStorage.removeItem("devtube")
         history.push('/home')
     }
@@ -42,7 +42,7 @@ const Navbar = () => {
 
     }
 
-    const searchOnClick = ()=>{
+    const searchOnClick = () => {
         history.push(`/search?text=${searchQuery.current.value}`)
     }
 
@@ -57,9 +57,9 @@ const Navbar = () => {
             }}
         >
 
-         { !user.token &&  <NavLink style={{ textDecoration: 'none', listStyle: 'none', color: "black" }} to="/signup"><MenuItem onClick={handleClose}>Signup</MenuItem></NavLink>}
-         { !user.token && <NavLink style={{ textDecoration: 'none', listStyle: 'none', color: "black" }} to="/login"><MenuItem onClick={handleClose}>Login</MenuItem></NavLink>}
-         { user.token && <MenuItem onClick={() => { handleClose();logout() }}>Logout</MenuItem>}
+            {!user.token && <NavLink style={{ textDecoration: 'none', listStyle: 'none', color: "black" }} to="/signup"><MenuItem onClick={handleClose}>Signup</MenuItem></NavLink>}
+            {!user.token && <NavLink style={{ textDecoration: 'none', listStyle: 'none', color: "black" }} to="/login"><MenuItem onClick={handleClose}>Login</MenuItem></NavLink>}
+            {user.token && <MenuItem onClick={() => { handleClose(); logout() }}>Logout</MenuItem>}
 
         </Menu>
     }
@@ -74,10 +74,11 @@ const Navbar = () => {
                         justifyContent: "space-between"
                     }}
                 >
-
-                    <Typography variant="h4" component="div" color="black"  >
-                        DevTube
+                    <NavLink style={{ textDecoration: 'none', listStyle: 'none', color: "black" }} to="/home">
+                        <Typography variant="h4" component="div" color="black"  >
+                            DevTube
                      </Typography>
+                    </NavLink>
                     {
                         !login && !signup &&
                         <Box
