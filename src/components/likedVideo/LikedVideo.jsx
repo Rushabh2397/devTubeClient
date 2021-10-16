@@ -75,7 +75,7 @@ const LikedVideo = () => {
                             </Paper>
                         }))
                         :
-                        (<Typography variant="h5">NO Video added to these playlist.</Typography>)
+                        (<Typography variant="h5">No video added to liked videos.</Typography>)
                 }
 
             </Box>
