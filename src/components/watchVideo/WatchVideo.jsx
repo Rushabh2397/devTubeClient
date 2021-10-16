@@ -85,15 +85,18 @@ const WatchVideo = () => {
     const handleWatchLaterClick = async (watchedValue) => {
         try {
             if (user.token) {
-                const res = watchedValue ? await addToWatchLater({ video_id: video_id }) : removeFromWatchLater({ video_id: video_id });
+                setLoading(true)
+                const res = watchedValue ? await addToWatchLater({ video_id: video_id }) : await removeFromWatchLater({ video_id: video_id });
                 let type = watchedValue ? "ADD_TO_WATCH_LATER" : "REMOVE_FROM_WATCH_LATER"
                 videoDispatch({ type: type, payload: { video_id: video_id } })
                 toast.success(res.data.message)
+                setLoading(false)
             } else {
                 history.push('/login')
             }
 
         } catch (error) {
+            setLoading(false)
             toast.error('Something went wromg.')
         }
     }
@@ -102,15 +105,18 @@ const WatchVideo = () => {
     const handleLikeClick = async (likedValue) => {
         try {
             if (user.token) {
-                const res = likedValue ? await addToLikedVideos({ video_id: video_id }) : removeFromLikedVideos({ video_id: video_id });
+                setLoading(true)
+                const res = likedValue ? await addToLikedVideos({ video_id: video_id }) : await removeFromLikedVideos({ video_id: video_id });
                 let type = likedValue ? "ADD_TO_LIKED_VIDEOS" : "REMOVE_FROM_LIKED_VIDEOS"
                 videoDispatch({ type: type, payload: { video_id: video_id } })
                 toast.success(res.data.message)
+                setLoading(false)
             } else {
                 history.push('/login')
             }
 
         } catch (error) {
+            setLoading(false)
             toast.error('Something went wromg.')
         }
     }
