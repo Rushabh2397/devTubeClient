@@ -24,7 +24,7 @@ import axios from "axios";
     axios.interceptors.response.use(null, (error) => {
         if (error.response) {
             if (error.response.status === 401) {
-                localStorage.removeItem('quizMaster')
+                localStorage.removeItem('devtube')
                 window.location.href = '/login';
                 return Promise.reject(error);
             } else return Promise.reject(error);
