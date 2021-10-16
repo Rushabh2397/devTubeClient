@@ -7,7 +7,7 @@ import ModalComp from '../modalComp/ModalComp'
 import Loader from '../loader/Loader'
 import toast from 'react-hot-toast'
 
-const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, videoDispatch }) => {
+const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, videoDispatch,setAnchorEl }) => {
 
     const [loading, setLoading] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
@@ -17,6 +17,7 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, videoDispatc
 
     const addToUserPlaylist = async (playlist_id) => {
         try {
+            console.log(playlist_id,vid)
             const res = await addToPlayList({ playlist_id: playlist_id, video_id: vid })
             
             videoDispatch({ type: 'ADD_VIDEO_TO_PLAYLIST', payload: { playlist_id: playlist_id, video_id: vid } })
@@ -56,7 +57,7 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, videoDispatc
 
                 setModalOpen(false)
                 setLoading(false)
-                videoDispatch({ type: 'CREATE_PLAYLIST', payload: { name: name, videos: [] } })
+                videoDispatch({ type: 'CREATE_PLAYLIST', payload: {_id:res.data.data._id, name: name, videos: [] } })
 
                 toast.success(res.data.message, {
                     duration: 1500,
@@ -131,7 +132,7 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, videoDispatc
                 </Box>
 
             </Menu>
-            {modalOpen && <ModalComp component={addNewPlaylist} handleClose={handleCloseModal} open={modalOpen} />}
+            {modalOpen && <ModalComp component={addNewPlaylist} setAnchorEl={setAnchorEl} handleClose={handleCloseModal} open={modalOpen} />}
             {loading && <Loader loading={loading} />}
         </Box>
     )

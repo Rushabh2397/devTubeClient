@@ -32,13 +32,13 @@ const WatchLaterVideo = () => {
     const removeFromUserWatchLater = async (video_id) => {
         try {
             setLoading(true)
-            const res = removeFromWatchLater({ video_id: video_id });
+            const res = await removeFromWatchLater({ video_id: video_id });
             videoDispatch({ type: "REMOVE_FROM_USER_WATCH_LATER", payload: { video_id: video_id } })
             toast.success(res.data.message)
             setLoading(false)
         } catch (error) {
             setLoading(false)
-            toast.error('Something went error.') 
+            toast.error('Something went wrong.') 
         }
     }
 

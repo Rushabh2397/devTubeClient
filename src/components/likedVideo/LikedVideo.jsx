@@ -24,16 +24,19 @@ const LikedVideo = () => {
             videoDispatch({ type: 'USER_CHOICES', payload: video })
             setLoading(false)
         } catch (error) {
+            console.log("error",error)
             setLoading(false)
         }
     }
 
     const removeFromUserLikedVideos = async (video_id) => {
         try {
-            const res = removeFromLikedVideos({ video_id: video_id });
+            const res =await removeFromLikedVideos({ video_id: video_id });
             videoDispatch({ type: "REMOVE_FROM_USER_LIKED_VIDEOS", payload: { video_id: video_id } })
+            console.log("res",res)
             toast.success(res.data.message)
         } catch (error) {
+            console.log("error",error)
            toast.error('Something went wrong')
         }
     }

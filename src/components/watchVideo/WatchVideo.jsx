@@ -200,6 +200,7 @@ const WatchVideo = () => {
                     userPlaylist={videoState.playlist}
                     videoDispatch={videoDispatch}
                     getUserChoicesInfo={getUserChoicesInfo}
+                    setAnchorEl={setAnchorEl}
                 />
             }
         </Box>

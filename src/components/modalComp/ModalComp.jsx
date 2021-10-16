@@ -14,7 +14,7 @@ const style = {
     borderRadius:"5px"
 };
 
-const ModalComp = ({ component, handleOpen, handleClose, open }) => {
+const ModalComp = ({ component, handleOpen, handleClose, open}) => {
 
     return (
         <div>

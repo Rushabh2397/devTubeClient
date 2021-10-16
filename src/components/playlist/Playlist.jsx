@@ -90,8 +90,8 @@ const Playlist = () => {
         <Box sx={{ marginLeft:{md:"150px", lg: "150px" }, marginTop: "2rem" }}>
             <Toolbar />
             {
-                videoState && videoState?.playlist?.length > 0 && videoState.playlist.map(play => {
-                    return <Box key={play._id} sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+                videoState && videoState?.playlist?.length > 0 && videoState.playlist.map((play,index) => {
+                    return <Box key={index} sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width:{xs:"90%",md:"80%",lg:"50%"} , marginBottom: "10px" }}>
                             <Typography align='left'  sx={{ fontSize:"2rem" }} >{play.name}</Typography>
