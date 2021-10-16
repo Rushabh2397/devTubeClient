@@ -4,22 +4,22 @@ import ReactPlayer from "react-player";
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
-import HistoryIcon from '@mui/icons-material/History';
-import { getVideoInfo, getUserChoices, addToLikedVideos, removeFromLikedVideos } from '../api'
+import { getVideoInfo, getUserChoices, addToLikedVideos, removeFromLikedVideos, addToWatchLater, removeFromWatchLater } from '../api'
 import Loader from '../loader/Loader'
 import { useParams } from 'react-router-dom'
 import Playlist from './Playlist';
-import {useVideo} from '../../context/VideoContext'
-
-
-
-
+import { useVideo } from '../../context/VideoContext'
+import { useAuth } from '../../context/AuthContext'
+import { useHistory } from 'react-router-dom'
+import CheckIcon from '@mui/icons-material/Check';
+import toast from 'react-hot-toast'
 
 const WatchVideo = () => {
-    
-    const {videoState,videoDispatch} = useVideo()
+
+    const { user } = useAuth()
+    const { videoState, videoDispatch } = useVideo();
+    const history = useHistory()
     const [video, setVideo] = useState('');
     const [loading, setLoading] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -50,41 +50,83 @@ const WatchVideo = () => {
         try {
             const res = await getUserChoices();
             let video = res.data.data
-            videoDispatch({type:'USER_CHOICES',payload:video})
+            videoDispatch({ type: 'USER_CHOICES', payload: video })
         } catch (error) {
 
         }
     }
 
-    const isVideoLiked = ()=>{
-        if(videoState && videoState?.likedVideos?.length>0){
-           return  videoState.likedVideos.some(vid => vid === video_id)
+    const isVideoLiked = () => {
+        if (videoState && videoState?.likedVideos?.length > 0) {
+            return videoState.likedVideos.some(vid => vid === video_id)
         } else {
             return false
         }
     }
 
-  
+    const isVideoWatchLater = () => {
+        if (videoState && videoState?.watchLater?.length > 0) {
+            return videoState.watchLater.some(vid => vid === video_id)
+        } else {
+            return false
+        }
+    }
+
+    const handlePlaylist = (e) => {
+        if (user.token) {
+            handleClick(e)
+        } else {
+            history.push('/login')
+        }
+    }
+
+
+
+    const handleWatchLaterClick = async (watchedValue) => {
+        try {
+            if (user.token) {
+                const res = watchedValue ? await addToWatchLater({ video_id: video_id }) : removeFromWatchLater({ video_id: video_id });
+                let type = watchedValue ? "ADD_TO_WATCH_LATER" : "REMOVE_FROM_WATCH_LATER"
+                videoDispatch({ type: type, payload: { video_id: video_id } })
+                toast.success(res.data.message)
+            } else {
+                history.push('/login')
+            }
+
+        } catch (error) {
+            toast.error('Something went wromg.')
+        }
+    }
+
 
     const handleLikeClick = async (likedValue) => {
         try {
-            const res = likedValue ? await addToLikedVideos({ video_id: video_id }) : removeFromLikedVideos({ video_id: video_id });
-            let type = likedValue ? "ADD_TO_LIKED_VIDEOS" :"REMOVE_FROM_LIKED_VIDEOS"
-            videoDispatch({type:type,payload:{video_id:video_id}})
-        } catch (error) {
+            if (user.token) {
+                const res = likedValue ? await addToLikedVideos({ video_id: video_id }) : removeFromLikedVideos({ video_id: video_id });
+                let type = likedValue ? "ADD_TO_LIKED_VIDEOS" : "REMOVE_FROM_LIKED_VIDEOS"
+                videoDispatch({ type: type, payload: { video_id: video_id } })
+                toast.success(res.data.message)
+            } else {
+                history.push('/login')
+            }
 
+        } catch (error) {
+            toast.error('Something went wromg.')
         }
     }
 
     useEffect(() => {
         getVideo()
-        getUserChoicesInfo()
+        if (user.token) {
+            getUserChoicesInfo()
+        }
+        // eslint-disable-next-line
     }, [])
 
 
 
     return (
-        <Box sx={{ marginLeft: "150px" }}>
+        <Box sx={{ marginLeft: { lg: "150px" } }}>
             <Toolbar />
             <Grid container align="center" sx={{ marginTop: "2rem" }}>
                 <Grid item lg={12} align="center" >
@@ -105,9 +147,9 @@ const WatchVideo = () => {
                         <PlaylistAddIcon
                             fontSize="large"
                             sx={{ marginRight: "2rem" }}
-                            onClick={handleClick}
+                            onClick={handlePlaylist}
                         />
-                        { isVideoLiked() ?
+                        {isVideoLiked() ?
                             <ThumbUpIcon
                                 color="action"
                                 fontSize="large"
@@ -120,10 +162,23 @@ const WatchVideo = () => {
                                 sx={{ marginRight: "2rem" }}
                                 onClick={() => { handleLikeClick(true) }}
                             />}
-                        <WatchLaterOutlinedIcon
-                            fontSize="large"
-                            sx={{ marginRight: "2rem" }}
-                        />
+                        {
+                            isVideoWatchLater() ?
+                                < CheckIcon
+                                    fontSize="large"
+                                    sx={{ marginRight: "2rem" }}
+                                    onClick={() => { handleWatchLaterClick(false) }}
+                                />
+                                :
+
+                                <WatchLaterOutlinedIcon
+                                    fontSize="large"
+                                    sx={{ marginRight: "2rem" }}
+                                    onClick={() => { handleWatchLaterClick(true) }}
+                                />
+                        }
+
+
                     </Box>
                     <Box sx={{ width: "80%", textAlign: "left", marginTop: "1rem" }}>
                         <Typography variant="h6" >Description</Typography>
@@ -141,9 +196,9 @@ const WatchVideo = () => {
                     anchorEl={anchorEl}
                     open={open}
                     handleClose={handleClose}
-                    vid ={video_id}
-                    userPlaylist = {videoState.playlist}
-                    videoDispatch ={videoDispatch}
+                    vid={video_id}
+                    userPlaylist={videoState.playlist}
+                    videoDispatch={videoDispatch}
                     getUserChoicesInfo={getUserChoicesInfo}
                 />
             }

@@ -1,14 +1,15 @@
-import { Box, Menu, MenuItem, Modal, TextField } from "@mui/material"
+import { Box, Menu, TextField } from "@mui/material"
 import { useState, useRef } from "react";
-import { NavLink } from "react-router-dom"
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckIcon from '@mui/icons-material/Check';
 import { addToPlayList, removeFromPaylist, createPlaylist } from '../api'
 import ModalComp from '../modalComp/ModalComp'
+import Loader from '../loader/Loader'
+import toast from 'react-hot-toast'
 
+const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist, videoDispatch }) => {
 
-const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist,videoDispatch }) => {
-
+    const [loading, setLoading] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
     const handleOpenModal = () => { setModalOpen(true) };
     const handleCloseModal = () => { setModalOpen(false) };
@@ -17,18 +18,30 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist,videoDispatch
     const addToUserPlaylist = async (playlist_id) => {
         try {
             const res = await addToPlayList({ playlist_id: playlist_id, video_id: vid })
-            videoDispatch({type:'ADD_VIDEO_TO_PLAYLIST',payload:{playlist_id: playlist_id, video_id: vid}})
+            
+            videoDispatch({ type: 'ADD_VIDEO_TO_PLAYLIST', payload: { playlist_id: playlist_id, video_id: vid } })
+            toast.success(res.data.message)
         } catch (error) {
-
+            toast.error('Something went wrong.')
         }
     }
 
     const removeFromUserPlaylist = async (playlist_id) => {
         try {
+            setLoading(true)
             const res = await removeFromPaylist({ playlist_id: playlist_id, video_id: vid })
-            videoDispatch({type:'REMOVE_VIDEO_FROM_PLAYLIST',payload:{playlist_id: playlist_id, video_id: vid}})
+            videoDispatch({ type: 'REMOVE_VIDEO_FROM_PLAYLIST', payload: { playlist_id: playlist_id, video_id: vid } })
+            setLoading(false)
+            toast.success(res.data.message, {
+                duration: 1500,
+                position: 'top-right',
+            })
         } catch (error) {
-
+            setLoading(false)
+            toast.error(error.response.data.message, {
+                duration: 1500,
+                position: 'top-right',
+            })
         }
     }
 
@@ -36,14 +49,29 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist,videoDispatch
     const createNewPlaylist = async (name) => {
         try {
             if (name.trim() === '') {
-               alert('Name is required.')
+                toast.error('Name is required.')
             } else {
+                setLoading(true)
                 const res = await createPlaylist({ name: name })
-                videoDispatch({type:'CREATE_PLAYLIST',payload:{name:name,videos:[vid]}})
+
+                setModalOpen(false)
+                setLoading(false)
+                videoDispatch({ type: 'CREATE_PLAYLIST', payload: { name: name, videos: [] } })
+
+                toast.success(res.data.message, {
+                    duration: 1500,
+                    position: 'top-right',
+                })
+
+
             }
 
         } catch (error) {
-
+            setLoading(false)
+            toast.error(error.response.data.message, {
+                duration: 1500,
+                position: 'top-right',
+            })
         }
     }
 
@@ -79,8 +107,8 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist,videoDispatch
                         return <Box
                             key={index}
                             sx={{ display: 'flex', alignItems: 'center', padding: "5px 15px", cursor: "pointer" }}
-                            onClick={() => { 
-                                play.videos.some(id => id === vid) ? removeFromUserPlaylist(play._id) : addToUserPlaylist(play._id) 
+                            onClick={() => {
+                                play.videos.some(id => id === vid) ? removeFromUserPlaylist(play._id) : addToUserPlaylist(play._id)
                                 handleClose()
                             }}
                         >
@@ -104,6 +132,7 @@ const Playlist = ({ anchorEl, handleClose, open, vid, userPlaylist,videoDispatch
 
             </Menu>
             {modalOpen && <ModalComp component={addNewPlaylist} handleClose={handleCloseModal} open={modalOpen} />}
+            {loading && <Loader loading={loading} />}
         </Box>
     )
 }

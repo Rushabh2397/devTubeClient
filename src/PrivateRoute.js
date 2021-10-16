@@ -3,7 +3,6 @@ import {useAuth} from './context/AuthContext'
 
 const PrivateRoute = ({...props})=>{
     const {user} = useAuth()
-    console.log("user",user)
     return user.token ? (
         <Route  {...props}/>
       ) : (

@@ -35,7 +35,7 @@ let intialState = {
 }
 
 export const AuthProvider = ({ children }) => {
-    const userState = JSON.parse(localStorage.getItem("quizMaster")) || {name:'',email:'',token:''};
+    const userState = JSON.parse(localStorage.getItem("devtube")) || {name:'',email:'',token:''};
     if(userState){
         intialState.name= userState.name
         intialState.token = userState.token

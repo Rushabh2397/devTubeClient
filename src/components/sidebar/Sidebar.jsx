@@ -1,12 +1,9 @@
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Divider } from "@mui/material"
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import { Box, Drawer, List, Toolbar} from "@mui/material"
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
-import HistoryIcon from '@mui/icons-material/History';
+//import HistoryIcon from '@mui/icons-material/History';
 import { NavLink } from "react-router-dom";
 
 
@@ -16,7 +13,7 @@ const drawerWidth = "100px";
 
 const Sidebar = () => {
     return (
-        <Box sx={{ display: 'flex', }}>
+        <Box sx={{ display:{xs:"none",md:'flex',lg:'flex'}  }}>
             <Drawer
                 variant="permanent"
                 sx={{
@@ -56,10 +53,10 @@ const Sidebar = () => {
                             <Box sx={{fontSize:"0.8rem"}} >Watch<br/>Later</Box>
                         </NavLink>
 
-                        <NavLink to="/liked" style={{display:"block",marginLeft:"15px",marginBottom:"15px",listStyle:"none",color:"black",textDecoration:"none"}}>
+                        {/* <NavLink to="/liked" style={{display:"block",marginLeft:"15px",marginBottom:"15px",listStyle:"none",color:"black",textDecoration:"none"}}>
                            <HistoryIcon sx={{ fontSize: "2rem", color: 'black'}} />
                             <Box sx={{fontSize:"0.8rem"}} >History</Box>
-                        </NavLink>
+                        </NavLink> */}
 
                         
 

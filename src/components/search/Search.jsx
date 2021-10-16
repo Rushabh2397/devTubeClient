@@ -1,23 +1,27 @@
 import {useEffect, useState} from 'react'
 import { Box, Grid, Toolbar, Tooltip } from "@mui/material"
 import Avatar from '@mui/material/Avatar';
-import { NavLink } from "react-router-dom";
-import {getAllVideos} from '../api'
+import { NavLink,useLocation } from "react-router-dom";
+import {searchVideo} from '../api'
 import {useVideo} from '../../context/VideoContext'
 import Loader from '../loader/Loader'
 
 
+function useQuery() {
+    return new URLSearchParams(useLocation().search);
+  }
 
-
-const Home = () => {
+const Search = () => {
 
     const {videoState,videoDispatch} = useVideo()
     const [loading,setLoading] = useState(false)
+    let query = useQuery();
+    let searchTerm = query.get("text") 
 
     const getVideos = async ()=>{
         try {
             setLoading(true)
-           const res = await getAllVideos() 
+           const res = await searchVideo({searchTerm:searchTerm}) 
            videoDispatch({type:'GET_ALL_VIDEO',payload:res.data.data})
            setLoading(false)
         } catch (error) {
@@ -28,17 +32,17 @@ const Home = () => {
     useEffect(()=>{
       getVideos()
       // eslint-disable-next-line
-    },[])
+    },[searchTerm])
 
 
     return (
-        <Box sx={{ marginLeft:{md:"150px",lg: "150px"} }}>
+        <Box sx={{ marginLeft:{lg: "150px"} }}>
             <Toolbar />
             {/* <Toolbar /> */}
             <Grid container align="center" spacing={2} sx={{ marginTop: "1rem" }}>
                 {
-                    videoState?.videos?.length>0 && videoState.videos.map((video,index)=>{
-                        return    <Grid key={index} item lg={3} md={12} sm={12} xs={12} >
+                    videoState?.videos?.length>0 && videoState.videos.map(video=>{
+                        return    <Grid item lg={3} md={12} sm={12} xs={12} >
                         <Box sx={{ width: "90%" }}>
                             <NavLink to={`/watch/${video._id}`} >
                                 <img src={video.thumbnail} sx={{ height: "200px" }} alt="video"/>
@@ -73,4 +77,4 @@ const Home = () => {
     )
 }
 
-export default Home
+export default Search

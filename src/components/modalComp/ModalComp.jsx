@@ -10,14 +10,12 @@ const style = {
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
-    border:"none",
     p:4,
     borderRadius:"5px"
 };
 
 const ModalComp = ({ component, handleOpen, handleClose, open }) => {
 
-    console.log("component", component)
     return (
         <div>
             <Modal

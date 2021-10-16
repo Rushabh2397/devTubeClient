@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { Link, useHistory } from 'react-router-dom'
 import validator from 'validator';
-//import { userLogin } from '../api'
+import { userLogin } from '../api'
 import Loader from '../loader/Loader'
 import toast from 'react-hot-toast'
-//import {useAuth} from '../../context/AuthContext'
+import {useAuth} from '../../context/AuthContext'
 
 const style = {
     loginContainer: {
@@ -35,7 +35,7 @@ const style = {
 
 
 const Login = () => {
-  //  const {userDispatch} = useAuth() 
+    const {userDispatch} = useAuth() 
     const history = useHistory()
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState({ email: '', err: false, errMsg: '' })
@@ -67,13 +67,13 @@ const Login = () => {
 
             if (formValidated) {
                 setLoading(true)
-               // const res = await userLogin({ email: email.email, password: password.password })
-                //toast.success(res.data.message)
-                //let user = res.data.data
-                //userDispatch({type:'LOGIN_SUCCESS',payload:user}) 
-                //localStorage.setItem('quizMaster', JSON.stringify({name:user.name,email:user.email,token:user.token}))
-                //setLoading(false)
-                //history.push('/home')
+               const res = await userLogin({ email: email.email, password: password.password })
+                toast.success(res.data.message)
+                let user = res.data.data
+                userDispatch({type:'LOGIN_SUCCESS',payload:user}) 
+                localStorage.setItem('devtube', JSON.stringify({name:user.name,email:user.email,token:user.token}))
+                setLoading(false)
+                history.push('/home')
             }
         } catch (error) {
             setLoading(false)

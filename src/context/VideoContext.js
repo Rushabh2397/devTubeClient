@@ -18,7 +18,8 @@ const videoReducer = (state, action) => {
             return {
                 ...state,
                 playlist: action.payload.playlist,
-                likedVideos: action.payload.likedVideos
+                likedVideos: action.payload.likedVideos,
+                watchLater : action.payload.watch_later
             }
 
         case 'CREATE_PLAYLIST':
@@ -51,6 +52,18 @@ const videoReducer = (state, action) => {
                 })
             }
 
+        case 'REMOVE_VIDEO_FROM_USER_PLAYLIST':
+
+            return {
+                ...state,
+                playlist: state.playlist.map(play => {
+                    if (play._id === action.payload.playlist_id) {
+                        play.videos = play.videos.filter(vid => vid._id !== action.payload.video_id)
+                    }
+                    return play
+                })
+            }
+
         case 'ADD_TO_LIKED_VIDEOS':
             return {
                 ...state,
@@ -59,8 +72,39 @@ const videoReducer = (state, action) => {
         case 'REMOVE_FROM_LIKED_VIDEOS':
             return {
                 ...state,
-                likedVideos: state.likedVideos.filter(id=>id!==action.payload.video_id)
+                likedVideos: state.likedVideos.filter(id => id !== action.payload.video_id)
             }
+
+        case 'REMOVE_FROM_USER_LIKED_VIDEOS':
+            return {
+                ...state,
+                likedVideos : state.likedVideos.filter(video=>video._id!==action.payload.video_id)
+            }
+
+            case 'ADD_TO_WATCH_LATER':
+            return {
+                ...state,
+                watchLater: [...state.watchLater, action.payload.video_id]
+            }
+        case 'REMOVE_FROM_WATCH_LATER':
+            return {
+                ...state,
+                watchLater: state.watchLater.filter(id => id !== action.payload.video_id)
+            }
+
+        case 'REMOVE_FROM_USER_WATCH_LATER':
+            return {
+                ...state,
+                watchLater : state.watchLater.filter(video=>video._id!==action.payload.video_id)
+            }
+
+        case 'DELETE_PLAYLIST':
+            return {
+                ...state,
+                playlist: state.playlist.filter(play => play._id !== action.payload.playlist_id)
+            }
+
+
         default:
             return state
 
@@ -70,7 +114,8 @@ const videoReducer = (state, action) => {
 let intialState = {
     videos: [],
     playlist: [],
-    likedVideos: []
+    likedVideos: [],
+    watchLater:[]
 }
 
 export const VideoProvider = ({ children }) => {

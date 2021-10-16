@@ -3,9 +3,9 @@ import { Box, Button, Grid, Paper, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom'
 import validator from 'validator';
-//import { userSignup } from '../api'
+import { userSignup } from '../api'
 import Loader from '../loader/Loader'
-//import toast from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
 const style = {
     signupContainer: {
@@ -74,16 +74,16 @@ const Signup = () => {
 
             if (formValidated) {
                 setLoading(true)
-                //const res = await userSignup({ name: name.name, email: email.email, password: password.password })
-              //  toast.success(res.data.message)
-               // history.push('/login')
+                const res = await userSignup({ name: name.name, email: email.email, password: password.password })
+                toast.success(res.data.message)
+                history.push('/login')
                 
                 setLoading(false)
                 
             }
         } catch (error) {
             setLoading(false)
-            //toast.error(error.response.data.message)
+            toast.error(error.response.data.message)
         }
 
     }
