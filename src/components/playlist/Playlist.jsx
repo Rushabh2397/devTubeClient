@@ -102,7 +102,7 @@ const Playlist = () => {
                                 (play.videos.map(vid => {
                                     return <Paper key={vid._id} elevation={5} sx={{ position: 'relative', display: 'flex', width:{xs:"100%",md:"80%",lg:"50%"}, padding: "10px", marginBottom: "10px" }}>
                                         <Box>
-                                            <NavLink to="/watch/">
+                                            <NavLink to={`/watch/${vid._id}`}>
                                                 <img src={vid.thumbnail} alt="video" style={{ width: "150px", height: "100px" }} />
                                             </NavLink>
                                         </Box>
